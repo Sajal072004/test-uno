@@ -1,0 +1,76 @@
+{
+  "chats": [
+    {
+      "id": 1,
+      "name": "Chat 1",
+      "messages": [
+        {
+          "sender": "AI",
+          "text": "Hello, how can I assist you today?"
+        },
+        {
+          "sender": "You",
+          "text": "I'm looking for information on how to use the chatbot."
+        },
+        {
+          "sender": "AI",
+          "text": "You can ask me anything, and I will try my best to help."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Chat 2",
+      "messages": [
+        {
+          "sender": "AI",
+          "text": "Good day! What can I do for you today?"
+        },
+        {
+          "sender": "You",
+          "text": "I need help with integrating AI into my app."
+        },
+        {
+          "sender": "AI",
+          "text": "I can guide you through the steps of integrating AI services."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Chat 3",
+      "messages": [
+        {
+          "sender": "AI",
+          "text": "Hi! How can I assist you?"
+        },
+        {
+          "sender": "You",
+          "text": "Can you tell me how to use this dashboard?"
+        },
+        {
+          "sender": "AI",
+          "text": "Sure! This dashboard lets you manage your AI chats and explore various features."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Chat 4",
+      "messages": [
+        {
+          "sender": "AI",
+          "text": "Hello! How can I help you today?"
+        },
+        {
+          "sender": "You",
+          "text": "I need help with managing my tasks."
+        },
+        {
+          "sender": "AI",
+          "text": "You can create tasks in the 'Task Manager' section and set deadlines."
+        }
+      ]
+    }
+  ]
+}
