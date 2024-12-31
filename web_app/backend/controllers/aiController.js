@@ -6,8 +6,9 @@ const { interactWithGemini, interactWithGeminiWithoutLogin } = require("../servi
  * @param {Object} res - Express response object.
  */
 const sendMessageToGemini = async (req, res) => {
-  const { prompt } = req.body;
+  const { prompt , prevMessages } = req.body;
   console.log("the prompt is ", prompt);
+  console.log("the prev messages are ", prevMessages);
 
   if (!prompt) {
     return res.status(400).json({
@@ -17,7 +18,7 @@ const sendMessageToGemini = async (req, res) => {
   }
 
   try {
-    const aiResponse = await interactWithGemini(req, prompt);
+    const aiResponse = await interactWithGemini(req, prompt, prevMessages);
     console.log("the response from ai is " , aiResponse);
 
     // Respond with the AI response

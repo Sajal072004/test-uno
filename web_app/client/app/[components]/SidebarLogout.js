@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
 const SidebarLogout = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const router = useRouter();
@@ -12,7 +13,9 @@ const SidebarLogout = ({ isSidebarOpen, setIsSidebarOpen }) => {
 
   return (
     <div
-      className={`z-10 ${isSidebarOpen ? "w-64" : "w-20"} fixed left-0 top-0 h-full bg-[#40065D] text-white p-6 space-y-4 transition-all duration-300 ease-in-out`}
+      className={`z-10 ${
+        isSidebarOpen ? "w-64" : "w-20"
+      } fixed left-0 top-0 h-full bg-[#40065D] text-white p-6 space-y-4 transition-all duration-300 ease-in-out`}
     >
       <div className="flex flex-col">
         {/* Sidebar Toggle */}
@@ -20,16 +23,16 @@ const SidebarLogout = ({ isSidebarOpen, setIsSidebarOpen }) => {
           {!isSidebarOpen ? (
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="text-white text-3xl mx-auto"
+              className="text-violet-700 rounded-full bg-white p-2 text-2xl ml-auto"
             >
-              ☰
+              <FaArrowRight />
             </button>
           ) : (
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="text-white text-3xl ml-auto"
+              className="text-violet-700 rounded-full bg-white p-2 text-2xl ml-auto"
             >
-              X
+              <FaArrowLeft />
             </button>
           )}
         </div>

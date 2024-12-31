@@ -6,6 +6,7 @@ import Sidebar from "../../../[components]/Sidebar.js"; // Import Sidebar compon
 import Header from "../../../[components]/Header"; // Import Header component
 import DropDownRow from "@/app/[components]/DropDownRow";
 import MessageInputBox from "../../../[components]/MessageInputBox"; // Import the new MessageInputBox component
+import { toast } from "react-toastify";
 
 export default function ChatPage() {
   const [chat, setChat] = useState(null);
@@ -13,6 +14,48 @@ export default function ChatPage() {
   const [currentChatId, setCurrentChatId] = useState(null);
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const router = useRouter();
+
+  const onDeleteMessage = async () => {
+    try {
+      console.log("The chat is being deleted");
+  
+      // Extract chat ID from the pathname
+      const id = pathname.split("/").pop();
+  
+      // Ensure id exists
+      if (!id) {
+        console.error("Chat ID is missing");
+        return;
+      }
+  
+      // API URL
+      const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/chats/${id}`;
+      console.log("the apiUrl is " , apiUrl);
+      const token = localStorage.getItem("unoClave-token");
+  
+      // Make DELETE request
+      const response = await fetch(apiUrl, {
+        method: "DELETE",
+        headers:{
+          "authorization": `Bearer ${token}`
+        }
+      });
+  
+      if (!response.ok) {
+        toast.error("failed to delete the chat.")
+        console.error("Failed to delete the chat:", await response.text());
+        return;
+      }
+  
+      console.log("Chat deleted successfully");
+      toast.success("Chat deleted");
+      router.push("/dashboard");
+    } catch (error) {
+      toast.error("Error deleting the chat");
+      console.error("Error deleting the chat:", error);
+    }
+  };
 
   const handleSendMessage = async (prompt) => {
     console.log("The prompt is: ", prompt);
@@ -22,11 +65,13 @@ export default function ChatPage() {
         content: prompt.trim(),
       };
   
-      // Update the chat UI with the user's message immediately
+      
       setChat((prevChat) => ({
         ...prevChat,
         messages: [...prevChat.messages, newMessageObject],
       }));
+
+      console.log("the chat are ", chat.messages);
   
       try {
         const token = localStorage.getItem("unoClave-token");
@@ -36,7 +81,7 @@ export default function ChatPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ prompt: newMessageObject.content }),
+          body: JSON.stringify({prevMessages: chat.messages ,prompt: newMessageObject.content }),
         });
   
         const data = await response.json();
@@ -188,7 +233,7 @@ export default function ChatPage() {
 
         {content}
 
-        {chat && <MessageInputBox onSendMessage={handleSendMessage} />}
+        {chat && <MessageInputBox onSendMessage={handleSendMessage} isLogin={true} onDeleteMessage ={onDeleteMessage} />}
       </div>
     </div>
   );

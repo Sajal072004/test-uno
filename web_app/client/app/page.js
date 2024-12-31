@@ -7,10 +7,14 @@ import Header from "./[components]/LogoutHeader";
 import DropDownRow from "./[components]/DropDownRow";
 import MessageInputBox from "./[components]/MessageInputBox";
 import HomeModal from "./[components]/HomeModal";
+import { toast } from 'react-toastify';
+
+
+
 
 export default function ChatPage() {
   const [chat, setChat] = useState({ messages: [] }); // Local chat state
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showModal, setShowModal] = useState(true); // Modal visibility state
   const pathname = usePathname();
   const router = useRouter();
@@ -30,7 +34,6 @@ export default function ChatPage() {
           });
 
           if (response.ok) {
-            // Redirect to dashboard if token is valid
             router.push("/dashboard");
           } else {
             console.error("Invalid token. Staying on chat page.");
@@ -42,7 +45,7 @@ export default function ChatPage() {
     };
 
     checkToken();
-  }, [router]);
+  }, []);
 
   const handleSendMessage = async (prompt) => {
     if (prompt.trim()) {
@@ -83,9 +86,11 @@ export default function ChatPage() {
           }));
         } else {
           console.error("Error from AI API:", data.error || "Unknown error");
+          toast.error("Cannot Send Your Request. Try Again");
         }
       } catch (error) {
         console.error("Error sending message to AI:", error);
+        toast.error("Cannot Send Your Request. Try Again");
       }
     }
   };
@@ -133,6 +138,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex min-h-screen">
+      
       {showModal && (
         <HomeModal handleModalOption={handleModalOption} />
       )}

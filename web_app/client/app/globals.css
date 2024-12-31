@@ -14,3 +14,35 @@ body {
     --radius: 0.5rem;
   }
 }
+
+/* Global Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px; /* Width of the vertical scrollbar */
+  height: 8px; /* Height of the horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f3f3; /* Light track background for contrast */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #40065D; /* Scrollbar thumb color */
+  border-radius: 10px; /* Rounded edges for a sleek look */
+  border: 2px solid #f3f3f3; /* Adds space between thumb and track */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5d2075; /* Slightly lighter shade for hover effect */
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent; /* Ensures the corner doesn't look awkward */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin; /* Makes scrollbar thin */
+  scrollbar-color: #40065D #f3f3f3; /* Thumb color | Track color */
+}
+

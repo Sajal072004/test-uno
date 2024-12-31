@@ -3,12 +3,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
 const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
   const [chats, setChats] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [chatTitle, setChatTitle] = useState(""); // Input state for the modal
   const router = useRouter();
 
- 
   useEffect(() => {
     const fetchChats = async () => {
       try {
@@ -16,15 +19,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("unoClave-token")}`
+            Authorization: `Bearer ${localStorage.getItem("unoClave-token")}`,
           },
         });
-        console.log("the chats are ", response.data);
 
         if (response.ok) {
           const data = await response.json();
           setChats(data.chats);
-          console.log(data.chats);
         } else {
           console.error("Failed to fetch chats:", response.statusText);
         }
@@ -36,24 +37,31 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
     fetchChats();
   }, []);
 
-  // Start a new chat
+  // Debugging: Check state changes
+  useEffect(() => {
+    console.log("Modal state changed:", isModalOpen);
+  }, [isModalOpen]);
+
+  // Function to start a new chat
   const startNewChat = async () => {
+    if (!chatTitle.trim()) {
+      toast.error("Please enter a chat name");
+      return;
+    }
+
     try {
-      // Get the token from localStorage
       const token = localStorage.getItem("unoClave-token");
-  
+
       if (!token) {
         console.error("User not authenticated. Redirecting to login.");
         router.push("/login");
         return;
       }
-  
-      // Create a new chat request payload
+
       const chatPayload = {
-        title: `Chat ${chats.length + 1}`,
+        title: chatTitle,
       };
-  
-      // Make a POST request to create a new chat
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chats`, {
         method: "POST",
         headers: {
@@ -62,28 +70,30 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
         },
         body: JSON.stringify(chatPayload),
       });
-  
+
       if (!response.ok) {
         const error = await response.json();
         console.error("Error creating chat:", error.message || response.statusText);
         return;
       }
-  
-      // Get the chat ID from the response
+
       const data = await response.json();
-      const { chatId } = data.chat; // Assuming the API returns { chatId: "generated-id" }
-  
+      toast.success("New Chat Created");
+      const { chatId } = data.chat;
+
       if (chatId) {
-        // Redirect the user to the new chat page
+        setChats((prevChats) => [...prevChats, { id: chatId, title: chatTitle }]); // Update chats list
         router.push(`/dashboard/chat/${chatId}`);
+        setIsModalOpen(false); // Close modal on success
+        setChatTitle(""); // Clear the title input
       } else {
         console.error("Chat ID not returned from API.");
       }
     } catch (error) {
+      toast.success("Created New Chat");
       console.error("Error starting new chat:", error.message);
     }
   };
-  
 
   return (
     <div
@@ -95,18 +105,18 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
         {/* Sidebar Toggle */}
         <div className="flex justify-between items-center mb-4">
           {!isSidebarOpen ? (
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="text-white text-3xl mx-auto"
-            >
-              ☰
-            </button>
+             <button
+             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+             className="text-[#40065D] rounded-full bg-white p-2 text-2xl ml-auto"
+           >
+             <FaArrowRight/>
+           </button>
           ) : (
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="text-white text-3xl ml-auto"
+              className="text-violet-700 rounded-full bg-white p-2 text-2xl ml-auto"
             >
-              X
+              <FaArrowLeft/>
             </button>
           )}
         </div>
@@ -114,7 +124,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
         {/* Sidebar Content */}
         {isSidebarOpen && (
           <>
-            <h3 className="font-bold text-xl mb-16">Chats</h3>
+            <h3 className="font-bold text-2xl mb-16">Chats</h3>
             <Link
               href="/dashboard"
               className="bg-[#8921d2] w-full py-2 rounded text-white hover:bg-[#9b50c0] mb-4 text-center"
@@ -122,14 +132,17 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
               Dashboard
             </Link>
             <button
-              onClick={startNewChat}
+              onClick={() => {
+                console.log("New Chat button clicked!");
+                setIsModalOpen(true);
+              }}
               className="bg-[#8921d2] w-full py-2 rounded text-white hover:bg-[#9b50c0] mb-4"
             >
               New Chat
             </button>
             <div
               className="space-y-2 mt-4 overflow-y-auto"
-              style={{ maxHeight: "50vh" }} // Adjust for other elements like header and footer
+              style={{ maxHeight: "50vh" }} 
             >
               {chats.length === 0 ? (
                 <p className="text-sm text-gray-300">No chats started yet</p>
@@ -142,8 +155,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
                       parseInt(id, 10) === chat.id ? "bg-[#9b50c0] font-bold" : ""
                     }`}
                   >
-                    {console.log(chat.title)}
-                    {chat.title || `Chat ${chat.id}`} {/* Display chat title or fallback */}
+                    {chat.title || `Chat ${chat.id}`}
                   </div>
                 ))
               )}
@@ -151,6 +163,39 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, id }) => {
           </>
         )}
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="text-lg font-bold mb-4 text-[#40065D]">Start New Chat</h2>
+            <input
+              type="text"
+              value={chatTitle}
+              onChange={(e) => setChatTitle(e.target.value)}
+              placeholder="Enter chat title"
+              className="w-full border border-gray-700 p-2 rounded mb-4 text-black "
+            />
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setChatTitle(""); // Clear title on cancel
+                }}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 text-black"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={startNewChat}
+                className="px-4 py-2 bg-[#8921d2] text-white rounded hover:bg-[#9b50c0]"
+              >
+                Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

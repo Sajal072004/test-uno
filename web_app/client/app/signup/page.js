@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signup } from "../utils/authApi"; // Import the signup API function
+import { toast } from "react-toastify";
 
 
 
@@ -28,7 +29,7 @@ export default function SignUpPage() {
     setError("");
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match!");
+      toast.error("Password and Confirm Password does not match");
       setLoading(false);
       return;
     }
@@ -49,17 +50,28 @@ export default function SignUpPage() {
           street,
         }),
       });
+      
+      
 
       if (!response.ok) {
-        throw new Error("Signup failed. Please try again.");
+        
+        throw new Error("User Already Exists. Please Log in");
       }
 
       const data = await response.json();
 
       localStorage.setItem("unoClave-token", data.token);
-
-      router.push("/dashboard");
+      toast.success("SignUp Successful. Redirecting to the dashboard");
+      setInterval(()=>{
+        router.push("/dashboard");
+      }, 1000);
+      
     } catch (err) {
+      if(err.message !== "User Already Exists. Please Log in"){
+        toast.error("Server Error. Please Try Again");
+      }
+      toast.error(err.message);
+      console.log(err.message);
       setError(err.message || "Signup failed. Please try again.");
       setLoading(false);
     }

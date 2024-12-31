@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unoclave-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: unoclave-backend
+  template:
+    metadata:
+      labels:
+        app: unoclave-backend
+    spec:
+      containers:
+        - name: unoclave-backend
+          image: gcr.io/omega-signifier-445614-a9/backend:latest
+          ports:
+            - containerPort: 8080

@@ -54,27 +54,28 @@ const Header = ({ isSidebarOpen, currentPage }) => {
         {/* Mobile Menu: Hamburger Icon */}
         <button
           onClick={toggleDropdown}
-          className="md:hidden flex items-center justify-center p-2 bg-[#5E2A82] rounded-md hover:bg-[#7A45A7]"
+          className="md:hidden flex items-center justify-center p-2 text-[#5E2A82] rounded-md bg-white"
         >
           <FaBars size={20} />
         </button>
 
         {/* Dropdown Menu */}
         {isDropdownOpen && (
-          <div className="absolute right-0 top-12 bg-white text-black shadow-lg rounded-lg w-40 z-50">
-            <button
-              onClick={handleSignup}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-            >
-             SignUp
-            </button>
-            <button
-              onClick={handleLogin}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-            >
-              Login
-            </button>
-          </div>
+          <div className="absolute right-0 top-12 bg-white text-black rounded-md w-60 z-50 border border-violet-600 p-4 shadow-lg md:hidden">
+          <button
+            onClick={handleSignup}
+            className="block w-full text-center px-4 py-2 border border-violet-600 rounded-md bg-violet-600 text-white font-semibold hover:bg-violet-500 hover:border-violet-800 mb-3 transition duration-200"
+          >
+            Sign Up
+          </button>
+          <button
+            onClick={handleLogin}
+            className="block w-full text-center px-4 py-2 border border-violet-600 rounded-md bg-violet-600 text-white font-semibold hover:bg-violet-500 hover:border-violet-800 mb-3 transition duration-200"
+          >
+            Login
+          </button>
+        </div>
+        
         )}
       </div>
     </header>

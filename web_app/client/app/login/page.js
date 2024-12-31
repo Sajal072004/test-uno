@@ -3,6 +3,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link"; // Importing Link from Next.js
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -24,17 +25,21 @@ export default function LoginPage() {
       });
       console.log("the response is ", response);
       if (!response.ok) {
-        throw new Error("Login failed");
+        throw new Error("Incorrect Email or Password");
       }
 
       const data = await response.json();
       console.log("Login successful:", data);
       localStorage.setItem('unoClave-token', data.token);
-
-      router.push('/dashboard');
+      toast.success("Login Successful. Redirecting to the dashboard");
+      setInterval(()=> {
+        router.push('/dashboard');
+      },1000);
+      
       
       
     } catch (error) {
+      toast.error(error.message);
       console.error("Error during login:", error);
       // Handle login error, e.g., show error message to user
     }

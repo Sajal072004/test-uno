@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../[components]/Header";
 import Sidebar from "../[components]/Sidebar";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -34,8 +35,6 @@ const ProfilePage = () => {
         );
 
         const userData = response.data.user;
-
-        // Update profile state with fetched data, using default values if undefined
         setProfile({
           username: userData.name || userData.email.split("@")[0],
           password: "********",
@@ -88,7 +87,7 @@ const ProfilePage = () => {
         }
       );
 
-      // Update the profile state with the latest server response
+      
       const updatedData = response.data.user;
       setProfile({
         username: updatedData.name || updatedData.email.split("@")[0],
@@ -102,7 +101,9 @@ const ProfilePage = () => {
 
       setIsEditable(false);
       console.log("Profile saved successfully:", updatedData);
+      toast.success("Profile Saved Successfully");
     } catch (error) {
+      toast.error("Error saving profile");
       console.error("Error saving profile:", error);
     }
   };
